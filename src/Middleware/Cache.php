@@ -10,7 +10,7 @@ use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 
 /**
- * Cache request to improve performance
+ * Cache request to improve performance.
  *
  * @author Tobias Nyholm <tobias.nyholm@gmail.com>
  */
@@ -26,6 +26,7 @@ class Cache implements MiddlewareInterface
     public function __invoke(Request $request, RequestHandlerInterface $handler): Response
     {
         $cacheKey = sha1($request->getUri());
+
         return $this->cache->get($cacheKey, function (ItemInterface $item) use ($handler, $request) {
             $item->expiresAfter(3600);
 
