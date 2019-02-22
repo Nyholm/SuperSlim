@@ -11,17 +11,27 @@
     ],
     "require": {
         "php": "^7.2",
-        "symfony/dependency-injection": "^4.2",
-        "symfony/http-foundation": "^4.2",
         "symfony/config": "^4.2",
+        "symfony/dependency-injection": "^4.2",
+        "symfony/flex": "^1.2",
+        "symfony/http-foundation": "^4.2",
         "symfony/yaml": "^4.2"
+    },
+    "require-dev": {
+        "symfony/routing": "^4.2",
+        "symfony/dotenv": "^4.2"
     },
     "autoload": {
         "psr-4": {
             "App\\": "src/"
         }
     },
-    "require-dev": {
-        "symfony/routing": "^4.2"
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "symfony": {
+            "allow-contrib": true
+        }
     }
 }

@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class DemoController
 {
-    public function index($foo, Request $request)
+    public function index(Request $request, $foo)
     {
         return new Response('demo: '.$foo);
     }

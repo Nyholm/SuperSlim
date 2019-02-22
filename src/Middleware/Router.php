@@ -16,11 +16,11 @@ class Router implements MiddlewareInterface
 {
     public function __invoke(Request $request, RequestHandlerInterface $handler): Response
     {
-        $uri = $request->getBaseUrl();
+        $uri = $request->getRequestUri();
 
         switch ($uri) {
-            case '':
-                $response = (new \App\Controller\DemoController())->index($request);
+            case '/bar':
+                $response = (new \App\Controller\DemoController())->index($request, 'xxx');
                 break;
             default:
                 $response = new Response('Not Found', 404);

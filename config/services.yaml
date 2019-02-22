@@ -10,11 +10,16 @@ parameters:
 services:
     # default configuration for services in *this* file
     _defaults:
-        autowire: true      # Automatically injects dependencies in your services.
-        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
-        public: true
+        autowire: true
+        public: false
         bind:
             string $environment: '%kernel.environment%'
+
+    App\Runner:
+        arguments:
+            -
+               - '@App\Middleware\ExceptionHandler'
+               - '@App\Middleware\Router'
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
@@ -22,9 +27,6 @@ services:
         resource: '../src/*'
         exclude: '../src/{Entity,Migrations,Tests,Kernel.php,Runner.php}'
 
-    App\Middleware\:
-        resource: '../src/Middleware'
-        public: true
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

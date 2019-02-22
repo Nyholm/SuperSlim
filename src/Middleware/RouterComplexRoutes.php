@@ -8,24 +8,31 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
 use Symfony\Component\Routing\Matcher\RequestMatcherInterface;
+use Symfony\Component\Routing\RouterInterface;
 
 /**
  * The Router is always the last middleware in the stack.
  *
  * @author Tobias Nyholm <tobias.nyholm@gmail.com>
  */
-class RouterFor50PlusRoutes implements MiddlewareInterface
+class RouterComplexRoutes implements MiddlewareInterface
 {
     private $matcher;
     private $container;
 
     public function __construct(RequestMatcherInterface $matcher)
     {
+        if (!interface_exists(RouterInterface::class)) {
+            throw new \RuntimeException(sprintf('Please run "composer require symfony/routing" to use "%s"', __CLASS__));
+        }
+
         $this->matcher = $matcher;
     }
 
     public function setContainer($container): void
     {
+
+
         $this->container = $container;
     }
 

@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace App;
 
 use App\Middleware\ExceptionHandler;
-use App\Middleware\RouterFor50PlusRoutes;
+use App\Middleware\MiddlewareInterface;
+use App\Middleware\RouterComplexRoutes;
 use Symfony\Component\Config\Exception\FileLocatorFileNotFoundException;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\Container;
@@ -38,12 +39,12 @@ class Kernel
         $this->boot();
 
         $middleware[] = $this->container->get(ExceptionHandler::class);
-        $router = $this->container->get(RouterFor50PlusRoutes::class);
+        $router = $this->container->get(RouterComplexRoutes::class);
         $router->setContainer($this->container);
         $middleware[] = $router;
         $middleware[] = new \App\Middleware\Router($this->container);
 
-        return (new Runner($middleware))->handle($request);
+        return $this->container->get(Runner::class)->handle($request);
     }
 
     public function boot()
@@ -60,6 +61,9 @@ class Kernel
             $container = new ContainerBuilder();
             $container->setParameter('kernel.project_dir', $this->getProjectDir());
             $container->setParameter('kernel.environment', $this->env);
+
+            $container->registerForAutoconfiguration(MiddlewareInterface::class)
+                ->addTag('kernel.middleware');
 
             $fileLocator = new FileLocator($this->getProjectDir().'/config');
             $loader = new YamlFileLoader($container, $fileLocator);
