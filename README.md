@@ -56,6 +56,68 @@ want. You can use `config/services.yaml` to register your services. By default t
 are autowired with [Symfony Dependency Injection](https://symfony.com/doc/current/components/dependency_injection.html)
 container.
 
+## Configuration
+
+It is simple to configure the application. You can use environment variables or
+the `.env` files for host specific configuration. If you want to register services
+or modify behavior then check the `config/` folder. 
+
+If you know your way around Symfony configuration then you wont have any problem 
+configure SuperSlim. 
+
+## Templating
+
+Returning `new Response('Hello world');` is not very fun. You probably want to use
+some templating. Pick you favorite tool and just register it as a service. Here is
+an example using [Twig](https://twig.symfony.com/).
+
+```bash
+composer require twig/twig
+```
+
+```yaml
+# config/packages/twig.yaml
+
+services:
+  Twig\Loader\FilesystemLoader:
+    arguments: ['%kernel.project_dir%/templates']
+
+  Twig\Environment:
+    arguments:
+      - '@Twig\Loader\FilesystemLoader'
+      - { cache: '%kernel.cache_dir%/templates' }
+
+```
+
+```php
+namespace App\Controller;
+
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Twig\Environment;
+
+class MyTwigController
+{
+    private $twig;
+
+    public function __construct(Environment $twig)
+    {
+        $this->twig = $twig;
+    }
+
+    public function index()
+    {
+        return new Response($this->twig->render('index.html.twig', ['name' => 'Foobar']));
+    }
+}
+```
+
+```twig
+{# templates/index.html.twig #}
+
+Hello {{ name }}!
+
+```
 
 ## The future of this framework
 

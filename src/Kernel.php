@@ -57,6 +57,7 @@ class Kernel
         } else {
             $container = new ContainerBuilder();
             $container->setParameter('kernel.project_dir', $this->getProjectDir());
+            $container->setParameter('kernel.cache_dir', $this->getProjectDir().'/var/cache/'.$this->env);
             $container->setParameter('kernel.environment', $this->env);
 
             $container->registerForAutoconfiguration(MiddlewareInterface::class)
