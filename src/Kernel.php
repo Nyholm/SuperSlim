@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace App;
 
-use App\Middleware\ExceptionHandler;
 use App\Middleware\MiddlewareInterface;
-use App\Middleware\RouterComplexRoutes;
 use Symfony\Component\Config\Exception\FileLocatorFileNotFoundException;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\Container;
@@ -16,6 +14,11 @@ use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * The heart of our application. We configure the container and then start running the middleware.
+ *
+ * @author Tobias Nyholm <tobias.nyholm@gmail.com>
+ */
 class Kernel
 {
     private $booted = false;
@@ -37,12 +40,6 @@ class Kernel
     public function handle(Request $request): Response
     {
         $this->boot();
-
-        $middleware[] = $this->container->get(ExceptionHandler::class);
-        $router = $this->container->get(RouterComplexRoutes::class);
-        $router->setContainer($this->container);
-        $middleware[] = $router;
-        $middleware[] = new \App\Middleware\Router($this->container);
 
         return $this->container->get(Runner::class)->handle($request);
     }
@@ -84,7 +81,6 @@ class Kernel
         }
 
         $this->container = $container;
-
         $this->booted = true;
     }
 

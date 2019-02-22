@@ -4,41 +4,43 @@ declare(strict_types=1);
 
 namespace App\Middleware;
 
+use Psr\Container\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
+use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Routing\Matcher\RequestMatcherInterface;
 use Symfony\Component\Routing\RouterInterface;
 
 /**
+ * This Router uses the super fast symfony 4 router. You can configure your routes using config/routes.yaml.
  * The Router is always the last middleware in the stack.
  *
  * @author Tobias Nyholm <tobias.nyholm@gmail.com>
  */
-class RouterComplexRoutes implements MiddlewareInterface
+class RouterForComplexRoutes implements MiddlewareInterface
 {
     private $matcher;
     private $container;
 
-    public function __construct(RequestMatcherInterface $matcher)
+    public function __construct(ContainerInterface $container, RequestMatcherInterface $matcher)
     {
         if (!interface_exists(RouterInterface::class)) {
             throw new \RuntimeException(sprintf('Please run "composer require symfony/routing" to use "%s"', __CLASS__));
         }
 
-        $this->matcher = $matcher;
-    }
-
-    public function setContainer($container): void
-    {
-
-
         $this->container = $container;
+        $this->matcher = $matcher;
     }
 
     public function __invoke(Request $request, RequestHandlerInterface $handler): Response
     {
-        $parameters = $this->matcher->matchRequest($request);
+        try {
+            $parameters = $this->matcher->matchRequest($request);
+        } catch (ResourceNotFoundException $e) {
+            return new Response('Not Found', 404);
+        }
+
+        // We expect $parameters['_controller'] to contain a string on format "ControllerClass::action"
         list($class, $method) = explode('::', $parameters['_controller'], 2);
         if (!$this->container->has($class)) {
             throw new \LogicException(sprintf('Invalid route config for route "%s"', $parameters['route']));
@@ -50,7 +52,8 @@ class RouterComplexRoutes implements MiddlewareInterface
         return $controller(...$arguments);
     }
 
-    private function getArguments(Request $request, array $controller, array $parameters) {
+    private function getArguments(Request $request, array $controller, array $parameters)
+    {
         $reflection = new \ReflectionMethod($controller[0], $controller[1]);
         foreach ($reflection->getParameters() as $param) {
             if (isset($parameters[$param->getName()])) {

@@ -1,0 +1,2 @@
+services:
+  Symfony\Contracts\Cache\CacheInterface: '@App\Service\VoidCache'

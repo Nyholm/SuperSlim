@@ -9,8 +9,22 @@ use Symfony\Component\HttpFoundation\Response;
 
 class DemoController
 {
-    public function index(Request $request, $foo)
+    private $env;
+
+    /**
+     * @param $env
+     */
+    public function __construct(string $environment)
     {
-        return new Response('demo: '.$foo);
+        $this->env = $environment;
+    }
+
+    public function index(Request $request, string $foo)
+    {
+        return new Response(json_encode([
+            'env' => $this->env,
+            'ip' => $request->getClientIp(),
+            'foo' => $foo,
+        ]), 200, ['Content-Type' => 'application/json']);
     }
 }

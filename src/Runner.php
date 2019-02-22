@@ -9,6 +9,13 @@ use App\Middleware\RequestHandlerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * A simple implementation of a middleware runner. It will run all middleware in
+ * order. The last one in the chain (usually the Router) will not call RequestHandlerInterface::handle()
+ * but to create a response.
+ *
+ * @author Tobias Nyholm <tobias.nyholm@gmail.com>
+ */
 class Runner implements RequestHandlerInterface
 {
     /** @var MiddlewareInterface[] */
@@ -23,7 +30,7 @@ class Runner implements RequestHandlerInterface
     {
         $middleware = array_shift($this->queue);
         if (null === $middleware) {
-            throw new \LogicException('The last middleware did not return a response');
+            throw new \LogicException('The last middleware did not return a response. Did you really add the router as last middleware?');
         }
 
         return $middleware($request, $this);

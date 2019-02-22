@@ -1,4 +1,4 @@
-# This file only works with RouterComplexRoutes
+# This file only works with RouterForComplexRoutes
 
 index:
     path: /{foo}
