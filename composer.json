@@ -1,0 +1,27 @@
+{
+    "name": "nyholm/super-slim",
+    "description": "A quick and extendable framework with delivers content blazing fast",
+    "type": "project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Tobias Nyholm",
+            "email": "tobias.nyholm@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "^7.2",
+        "symfony/dependency-injection": "^4.2",
+        "symfony/http-foundation": "^4.2",
+        "symfony/config": "^4.2",
+        "symfony/yaml": "^4.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    },
+    "require-dev": {
+        "symfony/routing": "^4.2"
+    }
+}
