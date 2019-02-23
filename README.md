@@ -2,6 +2,10 @@
 
 The quickest and best framework you can start building on. 
 
+```bash
+composer create-project nyholm/super-slim foobar-microservice
+```
+
 ## The idea
 
 The idea of this framework is to give you a good foundation to start building your
