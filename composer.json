@@ -1,6 +1,6 @@
 {
     "name": "nyholm/super-slim",
-    "description": "A quick and extendable framework with delivers content blazing fast",
+    "description": "A quick and extendable framework which delivers content blazing fast",
     "type": "project",
     "license": "MIT",
     "authors": [

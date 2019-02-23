@@ -55,25 +55,25 @@ backwards.
 
 ### Router
 
-The frameworks ships with two routers: `App\Middleware\Router`  and `App\Middleware\RouterForComplexRoutes`.
+The framework ships with two routers: `App\Middleware\Router`  and `App\Middleware\RouterForComplexRoutes`.
 The former is using just simple if-statements to match the route with a controller.
 This is by far the quickest way if you only got a few routes. If you have more complex
-routing or a great number of them, you might be better of with `RouterForComplexRoutes`. 
+`preg_match` routing or a great number of them, you might be better of with `RouterForComplexRoutes`. 
 It uses the [Symfony 4 router](https://symfony.com/doc/current/components/routing.html) 
 which is the fastest generic router written in PHP. 
 
-Please make sure you profile your application to see which routes that fits you better. 
+Make sure you profile your application to see which router fits you better. 
 
 ### Controller
 
-Here is your normal PHP classes and your normal code. Your controller should always
+Here are your normal PHP classes and normal code. Your controllers should always
 return a Response. 
 
 ### Services
 
 You are free to create how many services, value objects, database entities as you
 want. You can use `config/services.yaml` to register your services. By default they
-are autowired with [Symfony Dependency Injection](https://symfony.com/doc/current/components/dependency_injection.html)
+are autowired with the [Symfony Dependency Injection](https://symfony.com/doc/current/components/dependency_injection.html)
 container.
 
 ## Configuration
@@ -83,7 +83,7 @@ the `.env` files for host specific configuration. If you want to register servic
 or modify behavior then check the `config/` folder. 
 
 If you know your way around Symfony configuration then you wont have any problem 
-configure SuperSlim. 
+configuring SuperSlim. 
 
 ### Database
 
@@ -118,7 +118,7 @@ services:
     class: Symfony\Component\Console\Helper\HelperSet
     public: true
     factory: Doctrine\ORM\Tools\Console\ConsoleRunner::createHelperSet
-    arguments: ['@Doctrine\ORM\EntityManagerInterface']```
+    arguments: ['@Doctrine\ORM\EntityManagerInterface']
 
 ```
 
@@ -137,7 +137,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * @ORM\Entity()
  * @ORM\Table(name="products")
- **/
+ */
 class Product
 {
     /**
@@ -244,7 +244,7 @@ Hello {{ name }}!
 
 ### Cache
 
-Since you building a small and super fast app, then caching is probably very important
+Since you are building a small and super fast app, then caching is probably very important
 to you. Pick your favorite cache library and just register it as a service. Here
 is an example using [Symfony Cache](https://symfony.com/doc/current/components/cache.html).
 
@@ -277,7 +277,7 @@ services:
     Symfony\Contracts\Cache\CacheInterface: '@symfony.cache.memcached'
 ```
 
-In development we want to use `Void` cache.
+In development we want to use the `Void` cache.
 ```yaml
 # config/services_dev.yaml
 
@@ -291,7 +291,6 @@ services:
 CACHE_URL=memcached://localhost
 
 ```
-
 
 Then use the built in `App\Middleware\Cache` to cache each URL. Feel free to improve
 the creation of the cache key and other logic in this class. 
