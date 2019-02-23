@@ -223,6 +223,90 @@ Hello {{ name }}!
 
 ```
 
+### Cache
+
+Since you building a small and super fast app, then caching is probably very important
+to you. Pick your favorite cache library and just register it as a service. Here
+is an example using [Symfony Cache](https://symfony.com/doc/current/components/cache.html).
+
+```bash
+composer require symfony/cache
+```
+
+```yaml
+# config/packages/symfony_cache.yaml
+
+services:
+  symfony.cache.memcached:
+    class: Symfony\Component\Cache\Adapter\MemcachedAdapter
+    arguments: ['@native.memcached']
+
+  native.memcached:
+    class: Memcached
+    factory: Symfony\Component\Cache\Adapter\MemcachedAdapter::createConnection
+    arguments:
+        - '%env(resolve:CACHE_URL)%'
+        - { 'persistent_id': 'super_slim' }
+
+```
+
+Configure an alias for `CacheInterface` to use Memcached in production.
+```yaml
+# config/services.yaml
+
+services:
+    Symfony\Contracts\Cache\CacheInterface: '@symfony.cache.memcached'
+```
+
+In development we want to use `Void` cache.
+```yaml
+# config/services_dev.yaml
+
+services:
+  Symfony\Contracts\Cache\CacheInterface: '@App\Service\VoidCache'
+```
+
+```
+# .env.local
+
+CACHE_URL=memcached://localhost
+
+```
+
+
+Then use the built in `App\Middleware\Cache` to cache each URL. Feel free to improve
+the creation of the cache key and other logic in this class. 
+
+```php
+namespace App\Middleware;
+
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Contracts\Cache\ItemInterface;
+
+class Cache implements MiddlewareInterface
+{
+    private $cache;
+
+    public function __construct(CacheInterface $cache)
+    {
+        $this->cache = $cache;
+    }
+
+    public function __invoke(Request $request, RequestHandlerInterface $handler): Response
+    {
+        $cacheKey = sha1($request->getUri());
+
+        return $this->cache->get($cacheKey, function (ItemInterface $item) use ($handler, $request) {
+            $item->expiresAfter(3600);
+
+            return $handler->handle($request);
+        });
+    }
+}
+```
+
 ## The future of this framework
 
 I will treat this as a hobby project. If you like it, give it a star and fork it
