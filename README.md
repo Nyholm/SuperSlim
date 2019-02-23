@@ -88,12 +88,17 @@ services:
       - null
       - false
 
-  Doctrine\ORM\EntityManager:
+  Doctrine\ORM\EntityManagerInterface:
     factory: Doctrine\ORM\EntityManager::create
-    public: true
     arguments:
       - { driver: pdo_mysql, url: '%env(resolve:DATABASE_URL)%' }
       - '@doctrine.config'
+
+  doctrine.console_helper:
+    class: Symfony\Component\Console\Helper\HelperSet
+    public: true
+    factory: Doctrine\ORM\Tools\Console\ConsoleRunner::createHelperSet
+    arguments: ['@Doctrine\ORM\EntityManagerInterface']```
 
 ```
 
@@ -150,14 +155,13 @@ If you want to enable CLI support:
 // cli-config.php
 
 use App\Kernel;
-use Doctrine\ORM\Tools\Console\ConsoleRunner;
 
 require __DIR__.'/config/bootstrap.php';
 
 $kernel = new Kernel($_SERVER['APP_ENV'], (bool) $_SERVER['APP_DEBUG']);
 $kernel->boot();
 
-return ConsoleRunner::createHelperSet($kernel->getContainer()->get(\Doctrine\ORM\EntityManagerInterface::class));
+return $kernel->getContainer()->get('doctrine.console_helper');
 
 ```
 
