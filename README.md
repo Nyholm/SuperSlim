@@ -50,7 +50,7 @@ Runs the chain of middleware one by one in the order they are defined in the ser
 declaration of `App\Runner` in `services.yaml`. The last middleware should be the 
 router that calls one of your controller. The router will return a Response. 
 
-When the router middleware as returned a response the middleware will run again but
+When the router middleware has returned a response the middleware will run again but
 backwards. 
 
 ### Router
