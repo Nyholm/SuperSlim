@@ -52,10 +52,7 @@ class Kernel
         }
 
         $containerDumpFile = $this->getProjectDir().'/var/cache/'.$this->env.'/container.php';
-        if (!$this->debug && file_exists($containerDumpFile)) {
-            require_once $containerDumpFile;
-            $container = new \CachedContainer();
-        } else {
+        if ($this->debug || !file_exists($containerDumpFile)) {
             $container = new ContainerBuilder();
             $container->setParameter('kernel.project_dir', $this->getProjectDir());
             $container->setParameter('kernel.cache_dir', $this->getProjectDir().'/var/cache/'.$this->env);
@@ -83,7 +80,8 @@ class Kernel
             );
         }
 
-        $this->container = $container;
+        require_once $containerDumpFile;
+        $this->container = new \CachedContainer();
         $this->booted = true;
     }
 
