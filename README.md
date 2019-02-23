@@ -11,6 +11,26 @@ that are responsible for code and the dependencies you use.
 If you eventually outgrow this framework, just replace `Kernel.php` with Symfony's
 Kernel and you are running a Symfony 4 application.  
 
+## Performance 
+
+Below is a table of comparisons using a "hello world" application. 
+
+| Name                |       Time |   Memory |
+|---------------------|------------|----------|
+| SuperSlim           |   6.71 ms  |   168 kB |
+| Slim 3.1            |   11.8 ms  |   292 kB |
+| Symfony 4.2         |   14.7 ms  |   567 kB |
+| Zend Expressive 3.2 |   16.1 ms  |   404 kB |
+| Laravel 5.7         |   85.3 ms  |  2160 kB |
+
+Looking only at "hello world" is not a good measurement for performance of a framework.
+You have to consider how well a large application is performing, specifically **your**
+large application. You do also have to consider how quick you can develop in a
+framework.
+
+The table above is interesting if you are planning to build a small microservice
+that are similar to "hello world".   
+
 ## The architecture
 
 The framework is quite simple, it consists of less than 5 classes. It follows the
