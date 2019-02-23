@@ -19,7 +19,7 @@ class DemoController
         $this->env = $environment;
     }
 
-    public function index(Request $request, string $foo)
+    public function index(Request $request, string $foo): Response
     {
         return new Response(json_encode([
             'env' => $this->env,
