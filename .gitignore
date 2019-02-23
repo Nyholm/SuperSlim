@@ -3,4 +3,4 @@
 /.env.*.local
 /var/
 /vendor/
-
+.php_cs.cache
