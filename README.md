@@ -65,7 +65,107 @@ or modify behavior then check the `config/` folder.
 If you know your way around Symfony configuration then you wont have any problem 
 configure SuperSlim. 
 
-## Templating
+### Database
+
+Your application may want to use a database. Just pick your favorite way to connect
+to your database and register it as a service. Here is an example using [Doctrine](https://www.doctrine-project.org).
+
+```bash
+composer require doctrine/orm
+```
+
+```yaml
+# config/packages/doctrine.yaml
+
+services:
+  doctrine.config:
+    class: Doctrine\ORM\Configuration
+    factory: Doctrine\ORM\Tools\Setup::createAnnotationMetadataConfiguration
+    arguments:
+      - ['%kernel.project_dir%/src']
+      - 'kernel.debug'
+      - null
+      - null
+      - false
+
+  Doctrine\ORM\EntityManager:
+    factory: Doctrine\ORM\EntityManager::create
+    public: true
+    arguments:
+      - { driver: pdo_mysql, url: '%env(resolve:DATABASE_URL)%' }
+      - '@doctrine.config'
+
+```
+
+```
+# .env.local
+
+DATABASE_URL=mysql://db_user:db_password@127.0.0.1:3306/db_name
+
+```
+
+```php
+
+namespace App\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * @ORM\Entity()
+ * @ORM\Table(name="products")
+ **/
+class Product
+{
+    /**
+     * @ORM\Id()
+     * @ORM\Column(type="integer")
+     * @ORM\GeneratedValue()
+     */
+    protected $id;
+
+    /**
+     * @ORM\Column(type="string")
+     */
+    protected $name;
+
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    public function setName($name)
+    {
+        $this->name = $name;
+    }
+}
+```
+
+If you want to enable CLI support: 
+```php
+// cli-config.php
+
+use App\Kernel;
+use Doctrine\ORM\Tools\Console\ConsoleRunner;
+
+require __DIR__.'/config/bootstrap.php';
+
+$kernel = new Kernel($_SERVER['APP_ENV'], (bool) $_SERVER['APP_DEBUG']);
+$kernel->boot();
+
+return ConsoleRunner::createHelperSet($kernel->getContainer()->get(\Doctrine\ORM\EntityManagerInterface::class));
+
+```
+
+```bash
+vendor/bin/doctrine orm:schema-tool:update --force --dump-sql
+```
+
+### Templating
 
 Returning `new Response('Hello world');` is not very fun. You probably want to use
 some templating. Pick you favorite tool and just register it as a service. Here is

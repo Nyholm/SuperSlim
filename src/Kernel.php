@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App;
 
 use App\Middleware\MiddlewareInterface;
+use Psr\Container\ContainerInterface;
 use Symfony\Component\Config\Exception\FileLocatorFileNotFoundException;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\Container;
@@ -59,6 +60,7 @@ class Kernel
             $container->setParameter('kernel.project_dir', $this->getProjectDir());
             $container->setParameter('kernel.cache_dir', $this->getProjectDir().'/var/cache/'.$this->env);
             $container->setParameter('kernel.environment', $this->env);
+            $container->setParameter('kernel.debug', $this->debug);
 
             $container->registerForAutoconfiguration(MiddlewareInterface::class)
                 ->addTag('kernel.middleware');
@@ -83,6 +85,11 @@ class Kernel
 
         $this->container = $container;
         $this->booted = true;
+    }
+
+    public function getContainer(): ?ContainerInterface
+    {
+        return $this->container;
     }
 
     private function getProjectDir()
