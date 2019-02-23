@@ -8,7 +8,7 @@ use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 
 /**
- * A cache that do not remember anything.
+ * A cache that does not remember anything.
  *
  * @author Tobias Nyholm <tobias.nyholm@gmail.com>
  */

@@ -11,8 +11,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 /**
  * A simple implementation of a middleware runner. It will run all middleware in
- * order. The last one in the chain (usually the Router) will not call RequestHandlerInterface::handle()
- * but to create a response.
+ * order. The last middleware in the chain (usually the Router) will not call RequestHandlerInterface::handle(),
+ * it should create a new response and return it.
  *
  * @author Tobias Nyholm <tobias.nyholm@gmail.com>
  */
