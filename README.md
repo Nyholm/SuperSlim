@@ -308,6 +308,12 @@ class Cache implements MiddlewareInterface
 
 ## The future of this framework
 
+This small project is obviously not a competitor to any of the large frameworks and
+it should never be treated like that. It is just an exercise to show how easy it 
+is to build small application based on Symfony components. And if one is using 
+an architecture similar to SuperSlim there will not be any issues upgrading to 
+a full Symfony framework when needed in the future. 
+
 I will treat this as a hobby project. If you like it, give it a star and fork it
 to turn it into something you like. 
 
