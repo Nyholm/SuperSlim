@@ -19,6 +19,8 @@ use Symfony\Component\Routing\RouterInterface;
  */
 class RouterForComplexRoutes implements MiddlewareInterface
 {
+    const CONTROLLER_METHOD_SEPARATOR = '::';
+    
     private $matcher;
     private $container;
 
@@ -41,9 +43,13 @@ class RouterForComplexRoutes implements MiddlewareInterface
         }
 
         // We expect $parameters['_controller'] to contain a string on format "ControllerClass::action"
+        if (!strpos($parameters['_controller'], self::CONTROLLER_METHOD_SEPARATOR)) {
+            throw new \LogicException(sprintf('Invalid route config for route "%s". "%s" expected.', $parameters['_route'], self::CONTROLLER_METHOD_SEPARATOR));
+        }
+        
         list($class, $method) = explode('::', $parameters['_controller'], 2);
         if (!$this->container->has($class)) {
-            throw new \LogicException(sprintf('Invalid route config for route "%s"', $parameters['route']));
+            throw new \LogicException(sprintf('Invalid route config for route "%s". Controller "%s" not found.', $parameters['_route'], $class));
         }
 
         $controller = [$this->container->get($class), $method];
@@ -68,6 +74,6 @@ class RouterForComplexRoutes implements MiddlewareInterface
             }
         }
 
-        return $arguments;
+        return $arguments ?? [];
     }
 }
