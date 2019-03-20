@@ -20,7 +20,7 @@ use Symfony\Component\Routing\RouterInterface;
 class RouterForComplexRoutes implements MiddlewareInterface
 {
     const CONTROLLER_METHOD_SEPARATOR = '::';
-    
+
     private $matcher;
     private $container;
 
@@ -46,7 +46,7 @@ class RouterForComplexRoutes implements MiddlewareInterface
         if (!strpos($parameters['_controller'], self::CONTROLLER_METHOD_SEPARATOR)) {
             throw new \LogicException(sprintf('Invalid route config for route "%s". "%s" expected.', $parameters['_route'], self::CONTROLLER_METHOD_SEPARATOR));
         }
-        
+
         list($class, $method) = explode(self::CONTROLLER_METHOD_SEPARATOR, $parameters['_controller'], 2);
         if (!$this->container->has($class)) {
             throw new \LogicException(sprintf('Invalid route config for route "%s". Controller "%s" not found.', $parameters['_route'], $class));
