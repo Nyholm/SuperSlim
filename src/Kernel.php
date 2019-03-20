@@ -6,11 +6,17 @@ namespace App;
 
 use App\Middleware\MiddlewareInterface;
 use Psr\Container\ContainerInterface;
-use Symfony\Component\Config\Exception\FileLocatorFileNotFoundException;
 use Symfony\Component\Config\FileLocator;
+use Symfony\Component\Config\Loader\DelegatingLoader;
+use Symfony\Component\Config\Loader\LoaderResolver;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Dumper\PhpDumper;
+use Symfony\Component\DependencyInjection\Loader\ClosureLoader;
+use Symfony\Component\DependencyInjection\Loader\DirectoryLoader;
+use Symfony\Component\DependencyInjection\Loader\GlobFileLoader;
+use Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
+use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -22,6 +28,8 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class Kernel
 {
+    const CONFIG_EXTS = '.{php,xml,yaml,yml}';
+
     private $booted = false;
     private $debug;
     private $env;
@@ -62,13 +70,11 @@ class Kernel
             $container->registerForAutoconfiguration(MiddlewareInterface::class)
                 ->addTag('kernel.middleware');
 
-            $fileLocator = new FileLocator($this->getProjectDir().'/config');
-            $loader = new YamlFileLoader($container, $fileLocator);
-            try {
-                $loader->load('services.yaml');
-                $loader->load('services_'.$this->env.'.yaml');
-            } catch (FileLocatorFileNotFoundException $e) {
-            }
+            $loader = $this->getContainerLoader($container, $this->getProjectDir().'/config');
+            $loader->load('{packages}/*'.self::CONFIG_EXTS, 'glob');
+            $loader->load('{packages}/'.$this->env.'/**/*'.self::CONFIG_EXTS, 'glob');
+            $loader->load('{services}'.self::CONFIG_EXTS, 'glob');
+            $loader->load('{services}_'.$this->env.self::CONFIG_EXTS, 'glob');
 
             $container->compile();
 
@@ -88,6 +94,21 @@ class Kernel
     public function getContainer(): ?ContainerInterface
     {
         return $this->container;
+    }
+
+    private function getContainerLoader(ContainerBuilder $container, string $configDir)
+    {
+        $locator = new FileLocator($configDir);
+        $resolver = new LoaderResolver([
+            new XmlFileLoader($container, $locator),
+            new YamlFileLoader($container, $locator),
+            new PhpFileLoader($container, $locator),
+            new GlobFileLoader($container, $locator),
+            new DirectoryLoader($container, $locator),
+            new ClosureLoader($container),
+        ]);
+
+        return new DelegatingLoader($resolver);
     }
 
     private function getProjectDir()

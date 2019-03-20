@@ -20,6 +20,9 @@
     "symfony/filesystem": {
         "version": "v4.2.3"
     },
+    "symfony/finder": {
+        "version": "v4.2.4"
+    },
     "symfony/flex": {
         "version": "1.0",
         "recipe": {
