@@ -12,9 +12,6 @@ class DemoController
 {
     private $env;
 
-    /**
-     * @param $env
-     */
     public function __construct(string $environment)
     {
         $this->env = $environment;
@@ -26,7 +23,7 @@ class DemoController
             [
                 'env' => $this->env,
                 'ip' => $request->getClientIp(),
-                'foo' => $foo
+                'foo' => $foo,
             ]
         );
     }

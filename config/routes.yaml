@@ -1,5 +1,5 @@
 # This file only works with RouterForComplexRoutes
 
 index:
-    path: /{foo}
+    path: /page/{foo}
     controller: App\Controller\DemoController::index
