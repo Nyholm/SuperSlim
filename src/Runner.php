@@ -21,7 +21,7 @@ class Runner implements RequestHandlerInterface
     /** @var MiddlewareInterface[] */
     private $queue;
 
-    public function __construct(iterable $queue)
+    public function __construct(MiddlewareInterface ...$queue)
     {
         $this->queue = $queue;
     }
